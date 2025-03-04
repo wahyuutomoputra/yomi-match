@@ -212,7 +212,7 @@ export function JapaneseConverter() {
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="min-h-screen bg-white dark:bg-black">
-        <div className="w-full max-w-[520px] mx-auto px-4 py-4">
+        <div className="w-full max-w-full mx-auto px-4 py-4">
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-xl font-normal text-black dark:text-white">
               Japanese Writing System
@@ -221,7 +221,7 @@ export function JapaneseConverter() {
           </div>
           
           <div className="bg-white dark:bg-black rounded-3xl p-6 min-h-[calc(100vh-120px)]">
-            <div className="space-y-4">
+            <div className="space-y-4 max-w-[520px] mx-auto">
               <select
                 className="w-full bg-neutral-50 dark:bg-neutral-900 text-black dark:text-white text-sm 
                   rounded-2xl px-4 py-3 focus:outline-none 
@@ -268,12 +268,12 @@ export function JapaneseConverter() {
             </div>
 
             {isPlaying && (
-              <div className="space-y-4 mt-6">
-                <div className="bg-neutral-50 dark:bg-neutral-900 rounded-2xl p-4">
+              <div className="space-y-4 md:space-y-0 md:flex md:gap-12 mt-6">
+                <div className="bg-neutral-50 dark:bg-neutral-900 rounded-2xl p-4 md:p-16 md:flex-1">
                   <h2 className="text-sm font-normal mb-4 text-neutral-600 dark:text-neutral-400">
                     Source Characters
                   </h2>
-                  <div className="grid grid-cols-4 gap-2">
+                  <div className="grid grid-cols-4 md:grid-cols-7 gap-2 md:gap-x-12 md:gap-y-8">
                     {sourceOrder.map((char) => (
                       !matchedChars.has(char.id) && (
                         <DraggableCharacter
@@ -288,11 +288,11 @@ export function JapaneseConverter() {
                   </div>
                 </div>
 
-                <div className="bg-neutral-50 dark:bg-neutral-900 rounded-2xl p-4">
+                <div className="bg-neutral-50 dark:bg-neutral-900 rounded-2xl p-4 md:p-16 md:flex-1">
                   <h2 className="text-sm font-normal mb-4 text-neutral-600 dark:text-neutral-400">
                     Drop Zone
                   </h2>
-                  <div className="grid grid-cols-4 gap-2">
+                  <div className="grid grid-cols-4 md:grid-cols-7 gap-2 md:gap-x-12 md:gap-y-8">
                     {dropOrder.map((char) => (
                       <DropZone
                         key={char.id}
