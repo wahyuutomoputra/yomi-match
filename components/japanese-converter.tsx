@@ -161,17 +161,38 @@ export function JapaneseConverter() {
     setMatchedChars((prev) => new Set([...prev, charId]));
     setScore((prev) => prev + 1);
     setSelectedChar(null);
-    toast.success("Correct match!", {
-      className: "bg-green-50 text-green-800 border-green-200",
-      duration: 1000,
-    });
+    
+    // Enhanced success toast
+    toast.success(
+      <div className="flex items-center gap-2">
+        <span className="text-lg">🎯</span>
+        <div>
+          <p className="font-medium">Correct match!</p>
+          <p className="text-sm text-green-800 dark:text-green-200">
+            {score + 1} of {INITIAL_CHARACTERS.length} completed
+          </p>
+        </div>
+      </div>,
+      {
+        className: "bg-green-50 text-green-800 border-green-200 dark:bg-green-900 dark:text-green-100 dark:border-green-800",
+        duration: 1500,
+      }
+    );
 
     // Check if game is complete
     if (score + 1 === INITIAL_CHARACTERS.length) {
       toast.success(
-        `Congratulations! Completed in ${formatTime(elapsedTime)}!`,
+        <div className="flex items-center gap-2">
+          <span className="text-lg">🎊</span>
+          <div>
+            <p className="font-medium">Congratulations!</p>
+            <p className="text-sm text-purple-800 dark:text-purple-200">
+              Completed in {formatTime(elapsedTime)}
+            </p>
+          </div>
+        </div>,
         {
-          className: "bg-purple-50 text-purple-800 border-purple-200",
+          className: "bg-purple-50 text-purple-800 border-purple-200 dark:bg-purple-900 dark:text-purple-100 dark:border-purple-800",
           duration: 3000,
         }
       );
@@ -185,10 +206,22 @@ export function JapaneseConverter() {
       handleCorrectDrop(charId);
     } else {
       setSelectedChar(null);
-      toast.error("Try again!", {
-        className: "bg-red-50 text-red-800 border-red-200",
-        duration: 1000,
-      });
+      // Enhanced error toast
+      toast.error(
+        <div className="flex items-center gap-2">
+          <span className="text-lg">❌</span>
+          <div>
+            <p className="font-medium">Try again!</p>
+            <p className="text-sm text-red-800 dark:text-red-200">
+              That's not the right match
+            </p>
+          </div>
+        </div>,
+        {
+          className: "bg-red-50 text-red-800 border-red-200 dark:bg-red-900 dark:text-red-100 dark:border-red-800",
+          duration: 1500,
+        }
+      );
     }
   };
 
