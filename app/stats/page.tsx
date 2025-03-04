@@ -5,6 +5,16 @@ import { getQuizResults, calculateCharacterStats } from "@/lib/utils";
 import type { QuizResult, CharacterStats } from "@/lib/types";
 import { toast } from "sonner";
 import Swal from "sweetalert2";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Learning Statistics",
+  description: "Track your progress in learning Japanese characters. View detailed statistics of your learning journey.",
+  openGraph: {
+    title: "Japanese Learning Statistics",
+    description: "Track your Japanese learning progress"
+  }
+};
 
 export default function StatsPage() {
   const [results, setResults] = useState<QuizResult[]>([]);

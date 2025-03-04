@@ -2,6 +2,16 @@
 
 import { Container } from "@/components/container";
 import { INITIAL_CHARACTERS, DAKUON_CHARACTERS } from "@/lib/characters";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Hiragana Guide",
+  description: "Learn Hiragana, the basic Japanese phonetic alphabet. Complete guide with pronunciation and writing.",
+  openGraph: {
+    title: "Hiragana Guide - Japanese Writing System",
+    description: "Learn the basic Japanese phonetic alphabet"
+  }
+};
 
 export default function HiraganaPage() {
   return (
