@@ -21,12 +21,14 @@ function shuffleArray<T>(array: T[]): T[] {
 
 type ModeType = "romaji-hiragana" | "romaji-katakana" | "hiragana-katakana";
 type GameMode = "random" | "ordered";
-type CharacterSet = "basic" | "dakuon" | "all";
+type CharacterSet = "basic" | "dakuon" | "all" | "custom";
 
 export function JapaneseConverter() {
   const [mode, setMode] = useState<ModeType>("romaji-hiragana");
   const [gameMode, setGameMode] = useState<GameMode>("random");
   const [characterSet, setCharacterSet] = useState<CharacterSet>("basic");
+  const [basicCount, setBasicCount] = useState(5);
+  const [dakuonCount, setDakuonCount] = useState(5);
   const [score, setScore] = useState(0);
   const [matchedChars, setMatchedChars] = useState<Set<string>>(new Set());
   const [sourceOrder, setSourceOrder] = useState(() =>
@@ -68,6 +70,10 @@ export function JapaneseConverter() {
         return DAKUON_CHARACTERS;
       case "all":
         return [...INITIAL_CHARACTERS, ...DAKUON_CHARACTERS];
+      case "custom":
+        const shuffledBasic = shuffleArray(INITIAL_CHARACTERS).slice(0, basicCount);
+        const shuffledDakuon = shuffleArray(DAKUON_CHARACTERS).slice(0, dakuonCount);
+        return [...shuffledBasic, ...shuffledDakuon];
       default:
         return INITIAL_CHARACTERS;
     }
@@ -339,7 +345,48 @@ export function JapaneseConverter() {
                       <option value="basic">Basic Characters (46)</option>
                       <option value="dakuon">Dakuon Characters (25)</option>
                       <option value="all">All Characters (71)</option>
+                      <option value="custom">Custom Selection</option>
                     </select>
+
+                    {characterSet === "custom" && (
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-sm text-neutral-600 dark:text-neutral-400 mb-2">
+                            Basic Characters (1-46)
+                          </label>
+                          <input
+                            type="number"
+                            min="1"
+                            max="46"
+                            value={basicCount}
+                            onChange={(e) => setBasicCount(Math.min(46, Math.max(1, parseInt(e.target.value) || 1)))}
+                            className="w-full bg-neutral-50 dark:bg-neutral-900 text-black dark:text-white 
+                              rounded-2xl px-4 py-3 focus:outline-none 
+                              border border-neutral-200 dark:border-neutral-800"
+                          />
+                        </div>
+                        
+                        <div>
+                          <label className="block text-sm text-neutral-600 dark:text-neutral-400 mb-2">
+                            Dakuon Characters (1-25)
+                          </label>
+                          <input
+                            type="number"
+                            min="1"
+                            max="25"
+                            value={dakuonCount}
+                            onChange={(e) => setDakuonCount(Math.min(25, Math.max(1, parseInt(e.target.value) || 1)))}
+                            className="w-full bg-neutral-50 dark:bg-neutral-900 text-black dark:text-white 
+                              rounded-2xl px-4 py-3 focus:outline-none 
+                              border border-neutral-200 dark:border-neutral-800"
+                          />
+                        </div>
+
+                        <div className="text-sm text-neutral-600 dark:text-neutral-400">
+                          Total characters: {basicCount + dakuonCount}
+                        </div>
+                      </div>
+                    )}
 
                     <select
                       className="w-full bg-neutral-50 dark:bg-neutral-900 text-black dark:text-white 
