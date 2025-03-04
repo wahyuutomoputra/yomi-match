@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { INITIAL_CHARACTERS, DAKUON_CHARACTERS, type Character } from "@/lib/characters";
 import { shuffleArray } from "@/lib/utils";
 import { toast } from "sonner";
+import { saveQuizResult } from "@/lib/utils";
+import type { QuizResult } from "@/lib/types";
 
 type CharacterSet = "basic" | "dakuon" | "all" | "custom";
 type QuizMode = "hiragana" | "katakana";
@@ -123,11 +125,56 @@ export default function QuizPage() {
         currentIndex: prev.currentIndex + 1,
       }));
     }, 1500);
+
+    if (isGameComplete) {
+      const quizResult: QuizResult = {
+        id: Date.now().toString(),
+        date: new Date().toISOString(),
+        mode: quizMode,
+        characterSet,
+        totalQuestions: quizState.questions.length,
+        correctAnswers: quizState.score,
+        wrongAnswers: quizState.wrongAnswers,
+        questions: quizState.questions.map(q => ({
+          character: quizMode === "hiragana" ? q.character.hiragana : q.character.katakana,
+          correct: q.answered === q.character.romaji,
+          userAnswer: q.answered || "",
+          correctAnswer: q.character.romaji
+        }))
+      };
+      
+      saveQuizResult(quizResult);
+      toast.success("Quiz results saved!");
+    }
   };
 
   const isGameComplete = quizState.currentIndex === quizState.questions.length;
 
   const currentQuestion = quizState.questions[quizState.currentIndex] || null;
+
+  // Tambahkan useEffect untuk menyimpan hasil saat game selesai
+  useEffect(() => {
+    if (isGameComplete && quizState.questions.length > 0) {
+      const quizResult: QuizResult = {
+        id: Date.now().toString(),
+        date: new Date().toISOString(),
+        mode: quizMode,
+        characterSet,
+        totalQuestions: quizState.questions.length,
+        correctAnswers: quizState.score,
+        wrongAnswers: quizState.wrongAnswers,
+        questions: quizState.questions.map(q => ({
+          character: quizMode === "hiragana" ? q.character.hiragana : q.character.katakana,
+          correct: q.answered === q.character.romaji,
+          userAnswer: q.answered || "",
+          correctAnswer: q.character.romaji
+        }))
+      };
+      
+      saveQuizResult(quizResult);
+      toast.success("Quiz results saved!");
+    }
+  }, [isGameComplete, quizState.questions]);
 
   return (
     <div className="min-h-screen p-4">
