@@ -148,7 +148,8 @@ export function JapaneseConverter() {
             className="select bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-medium 
               w-full max-w-xs border-none shadow-md hover:shadow-lg transition-shadow text-sm sm:text-base"
             value={mode}
-            onChange={(e) => handleModeChange(e.target.value as typeof mode)}
+            onChange={(e) => handleModeChange((e.target as any).value as typeof mode)}
+            defaultValue={mode}
           >
             <option value="romaji-hiragana">Romaji → Hiragana</option>
             <option value="romaji-katakana">Romaji → Katakana</option>
