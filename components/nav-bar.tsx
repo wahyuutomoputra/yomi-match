@@ -24,6 +24,9 @@ export function NavBar() {
               <NavLink href="/" active={pathname === "/"}>
                 Game
               </NavLink>
+              <NavLink href="/quiz" active={pathname === "/quiz"}>
+                Quiz
+              </NavLink>
               <NavLink href="/hiragana" active={pathname === "/hiragana"}>
                 Hiragana
               </NavLink>
