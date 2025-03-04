@@ -211,77 +211,83 @@ export function JapaneseConverter() {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="min-h-screen bg-neutral-100 dark:bg-neutral-950 text-neutral-800 dark:text-neutral-200">
-        <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="min-h-screen bg-gradient-to-b from-white to-neutral-100 dark:from-black dark:to-neutral-950">
+        <div className="max-w-5xl mx-auto px-4 py-12">
           <div className="flex items-center justify-between mb-12">
-            <h1 className="text-2xl font-medium text-center">
+            <h1 className="text-3xl font-medium bg-gradient-to-r from-neutral-800 to-neutral-600 
+              dark:from-white dark:to-neutral-400 bg-clip-text text-transparent">
               Japanese Writing System Converter
             </h1>
             <ThemeToggle />
           </div>
           
-          <div className="flex items-center justify-between gap-4 mb-8 bg-white dark:bg-neutral-900 rounded-xl p-4 shadow-sm">
-            <select
-              className="bg-neutral-100 dark:bg-neutral-800 text-sm rounded-lg px-4 py-2.5 
-                focus:outline-none border border-neutral-200 dark:border-neutral-700"
-              value={mode}
-              onChange={(e) => handleModeChange((e.target as any).value as typeof mode)}
-              disabled={isPlaying}
-            >
-              <option value="romaji-hiragana">Romaji → Hiragana</option>
-              <option value="romaji-katakana">Romaji → Katakana</option>
-              <option value="hiragana-katakana">Hiragana ↔ Katakana</option>
-            </select>
+          <div className="bg-white/70 dark:bg-neutral-900/70 backdrop-blur-xl rounded-3xl p-6 
+            shadow-[0_0_40px_-15px_rgba(0,0,0,0.1)] dark:shadow-[0_0_40px_-15px_rgba(255,255,255,0.1)] mb-8">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <select
+                className="bg-white dark:bg-neutral-800 text-sm rounded-2xl px-6 py-3
+                  focus:outline-none focus:ring-2 focus:ring-violet-500/20 shadow-sm
+                  border border-neutral-200/50 dark:border-neutral-700/50
+                  hover:border-violet-500/30 dark:hover:border-violet-500/30 transition-colors"
+                value={mode}
+                onChange={(e) => handleModeChange((e.target as any).value as typeof mode)}
+                disabled={isPlaying}
+              >
+                <option value="romaji-hiragana">Romaji → Hiragana</option>
+                <option value="romaji-katakana">Romaji → Katakana</option>
+                <option value="hiragana-katakana">Hiragana ↔ Katakana</option>
+              </select>
 
-            <div className="flex items-center gap-4">
-              {!isPlaying ? (
-                <button
-                  onClick={handleStart}
-                  className="px-6 py-2.5 bg-neutral-100 dark:bg-neutral-800 rounded-lg 
-                    border border-neutral-200 dark:border-neutral-700
-                    hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors text-sm"
-                >
-                  Start
-                </button>
-              ) : (
-                <>
-                  <div className="font-mono text-sm px-4 py-2 bg-neutral-100 dark:bg-neutral-800 rounded-lg 
-                    border border-neutral-200 dark:border-neutral-700">
+              <div className="flex items-center gap-4">
+                {isPlaying && (
+                  <div className="font-mono text-sm px-6 py-3 bg-white dark:bg-neutral-800 
+                    rounded-2xl shadow-sm border border-neutral-200/50 dark:border-neutral-700/50">
                     {formatTime(elapsedTime)}
                   </div>
-                  <button
-                    onClick={() => {
+                )}
+                
+                <button
+                  onClick={() => {
+                    if (isPlaying) {
                       setIsPlaying(false);
                       setElapsedTime(0);
                       setScore(0);
                       setMatchedChars(new Set());
-                    }}
-                    className="px-6 py-2.5 bg-rose-50 dark:bg-rose-500/20 text-rose-600 dark:text-rose-200 
-                      rounded-lg border border-rose-100 dark:border-rose-500/20
-                      hover:bg-rose-100 dark:hover:bg-rose-500/30 transition-colors text-sm"
-                  >
-                    Stop
-                  </button>
-                </>
-              )}
+                    } else {
+                      setIsPlaying(true);
+                    }
+                  }}
+                  className={`px-8 py-3 rounded-2xl text-sm font-medium shadow-sm transition-all
+                    active:scale-95 hover:shadow-md
+                    ${isPlaying 
+                      ? "bg-rose-500 text-white hover:bg-rose-600" 
+                      : "bg-violet-500 text-white hover:bg-violet-600"
+                    }`}
+                >
+                  {isPlaying ? "Stop" : "Start"}
+                </button>
 
-              <div className="flex items-center gap-2">
-                <div className="px-4 py-2 bg-neutral-100 dark:bg-neutral-800 rounded-lg 
-                  border border-neutral-200 dark:border-neutral-700 text-sm">
-                  {score} / {INITIAL_CHARACTERS.length}
-                </div>
-                <div className="px-4 py-2 bg-neutral-100 dark:bg-neutral-800 rounded-lg 
-                  border border-neutral-200 dark:border-neutral-700 text-sm">
-                  {Math.round((score / INITIAL_CHARACTERS.length) * 100)}%
+                <div className="flex items-center gap-3">
+                  <div className="px-6 py-3 bg-white dark:bg-neutral-800 rounded-2xl shadow-sm 
+                    text-sm border border-neutral-200/50 dark:border-neutral-700/50">
+                    {score} / {INITIAL_CHARACTERS.length}
+                  </div>
+                  <div className="px-6 py-3 bg-white dark:bg-neutral-800 rounded-2xl shadow-sm 
+                    text-sm border border-neutral-200/50 dark:border-neutral-700/50">
+                    {Math.round((score / INITIAL_CHARACTERS.length) * 100)}%
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
           {isPlaying ? (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-white dark:bg-neutral-900 rounded-xl p-6 shadow-sm">
-                <h2 className="text-sm font-medium mb-6 text-neutral-600 dark:text-neutral-400">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="bg-white/70 dark:bg-neutral-900/70 backdrop-blur-xl rounded-3xl p-8 
+                shadow-[0_0_40px_-15px_rgba(0,0,0,0.1)] dark:shadow-[0_0_40px_-15px_rgba(255,255,255,0.1)]">
+                <h2 className="text-sm font-medium mb-8 text-neutral-500 dark:text-neutral-400 
+                  flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-violet-500"></div>
                   Source Characters
                 </h2>
                 <div className="grid grid-cols-4 gap-4">
@@ -298,8 +304,11 @@ export function JapaneseConverter() {
                   ))}
                 </div>
               </div>
-              <div className="bg-white dark:bg-neutral-900 rounded-xl p-6 shadow-sm">
-                <h2 className="text-sm font-medium mb-6 text-neutral-600 dark:text-neutral-400">
+              <div className="bg-white/70 dark:bg-neutral-900/70 backdrop-blur-xl rounded-3xl p-8 
+                shadow-[0_0_40px_-15px_rgba(0,0,0,0.1)] dark:shadow-[0_0_40px_-15px_rgba(255,255,255,0.1)]">
+                <h2 className="text-sm font-medium mb-8 text-neutral-500 dark:text-neutral-400
+                  flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-rose-500"></div>
                   Drop Zone
                 </h2>
                 <div className="grid grid-cols-4 gap-4">
@@ -318,10 +327,48 @@ export function JapaneseConverter() {
               </div>
             </div>
           ) : (
-            <div className="text-center py-12">
-              <p className="text-neutral-500 dark:text-neutral-400 text-sm">
-                Select a mode and click Start to begin matching characters
-              </p>
+            <div className="flex flex-col items-center justify-center py-24 px-4">
+              <div className="relative">
+                <div className="absolute -inset-1 bg-gradient-to-r from-violet-500 to-rose-500 
+                  rounded-3xl opacity-20 blur-xl animate-pulse"></div>
+                <div className="relative bg-white dark:bg-neutral-900 rounded-3xl p-8 text-center">
+                  <div className="flex flex-col items-center gap-2 mb-6">
+                    <span className="text-4xl">🎌</span>
+                    <h2 className="text-xl font-medium text-neutral-800 dark:text-neutral-200">
+                      Ready to Learn Japanese?
+                    </h2>
+                  </div>
+                  
+                  <div className="space-y-4 mb-8 max-w-md mx-auto">
+                    <p className="text-neutral-600 dark:text-neutral-400">
+                      Practice matching Japanese characters in an interactive way.
+                    </p>
+                    <div className="flex flex-col gap-2 text-sm text-neutral-500 dark:text-neutral-500">
+                      <div className="flex items-center gap-2 justify-center">
+                        <span className="w-1.5 h-1.5 rounded-full bg-violet-500"></span>
+                        Select your preferred mode
+                      </div>
+                      <div className="flex items-center gap-2 justify-center">
+                        <span className="w-1.5 h-1.5 rounded-full bg-violet-500"></span>
+                        Click Start to begin the game
+                      </div>
+                      <div className="flex items-center gap-2 justify-center">
+                        <span className="w-1.5 h-1.5 rounded-full bg-violet-500"></span>
+                        Match the characters by dragging or clicking
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => setIsPlaying(true)}
+                    className="px-8 py-3 bg-violet-500 text-white rounded-xl font-medium
+                      hover:bg-violet-600 transition-all active:scale-95 shadow-lg
+                      hover:shadow-violet-500/25"
+                  >
+                    Start Learning
+                  </button>
+                </div>
+              </div>
             </div>
           )}
         </div>
