@@ -8,7 +8,6 @@ import { saveQuizResult } from "@/lib/utils";
 import type { QuizResult } from "@/lib/types";
 import { motion, AnimatePresence } from "framer-motion";
 import { Progress } from "@/components/ui/progress";
-import type { Metadata } from "next";
 
 type CharacterSet = "basic" | "dakuon" | "all" | "custom";
 type QuizMode = "hiragana" | "katakana";
@@ -24,15 +23,6 @@ interface QuizState {
     isSubmitted?: boolean;
   }[];
 }
-
-export const metadata: Metadata = {
-  title: "Japanese Quiz",
-  description: "Test your Japanese knowledge with interactive quizzes. Practice Hiragana and Katakana characters.",
-  openGraph: {
-    title: "Japanese Quiz - Test Your Knowledge",
-    description: "Interactive Japanese writing quiz system"
-  }
-};
 
 export default function QuizPage() {
   const [isPlaying, setIsPlaying] = useState(false);

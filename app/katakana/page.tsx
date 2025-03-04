@@ -2,16 +2,6 @@
 
 import { INITIAL_CHARACTERS, DAKUON_CHARACTERS } from "@/lib/characters";
 import { Container } from "@/components/container";
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Katakana Guide",
-  description: "Learn Katakana, the Japanese alphabet used for foreign words. Complete guide with pronunciation and writing.",
-  openGraph: {
-    title: "Katakana Guide - Japanese Writing System",
-    description: "Learn the Japanese alphabet for foreign words"
-  }
-};
 
 export default function KatakanaPage() {
   return (
