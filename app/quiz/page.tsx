@@ -6,6 +6,7 @@ import { shuffleArray } from "@/lib/utils";
 import { toast } from "sonner";
 import { saveQuizResult } from "@/lib/utils";
 import type { QuizResult } from "@/lib/types";
+import { motion } from "framer-motion";
 
 type CharacterSet = "basic" | "dakuon" | "all" | "custom";
 type QuizMode = "hiragana" | "katakana";
@@ -177,99 +178,139 @@ export default function QuizPage() {
   }, [isGameComplete, quizState.questions]);
 
   return (
-    <div className="min-h-screen p-4">
+    <div className="min-h-screen p-4 bg-gradient-to-br from-violet-50 to-pink-50 dark:from-neutral-950 dark:to-neutral-900">
       <div className="max-w-[520px] mx-auto space-y-6">
         {!isPlaying ? (
-          <>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-6 bg-white dark:bg-neutral-800 p-8 rounded-3xl shadow-xl"
+          >
             <div className="text-center space-y-2">
-              <h1 className="text-2xl font-medium">Japanese Quiz</h1>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-violet-600 to-pink-600 bg-clip-text text-transparent">
+                Japanese Quiz
+              </h1>
               <p className="text-neutral-600 dark:text-neutral-400">
                 Test your knowledge of Japanese characters
               </p>
             </div>
 
-            <select
-              className="w-full bg-neutral-50 dark:bg-neutral-900 text-black dark:text-white 
-                rounded-2xl px-4 py-3 focus:outline-none 
-                border border-neutral-200 dark:border-neutral-800"
-              value={quizMode}
-              onChange={(e) => setQuizMode(e.target.value as QuizMode)}
-            >
-              <option value="hiragana">Hiragana Quiz</option>
-              <option value="katakana">Katakana Quiz</option>
-            </select>
-
-            <select
-              className="w-full bg-neutral-50 dark:bg-neutral-900 text-black dark:text-white 
-                rounded-2xl px-4 py-3 focus:outline-none 
-                border border-neutral-200 dark:border-neutral-800"
-              value={characterSet}
-              onChange={(e) => setCharacterSet(e.target.value as CharacterSet)}
-            >
-              <option value="basic">Basic Characters (46)</option>
-              <option value="dakuon">Dakuon Characters (25)</option>
-              <option value="all">All Characters (71)</option>
-              <option value="custom">Custom Selection</option>
-            </select>
-
-            {characterSet === "custom" && (
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm text-neutral-600 dark:text-neutral-400 mb-2">
-                    Basic Characters (1-46)
-                  </label>
-                  <input
-                    type="number"
-                    min="1"
-                    max="46"
-                    value={basicCount}
-                    onChange={(e) => setBasicCount(Math.min(46, Math.max(1, parseInt(e.target.value) || 1)))}
-                    className="w-full bg-neutral-50 dark:bg-neutral-900 text-black dark:text-white 
-                      rounded-2xl px-4 py-3 focus:outline-none 
-                      border border-neutral-200 dark:border-neutral-800"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm text-neutral-600 dark:text-neutral-400 mb-2">
-                    Dakuon Characters (1-25)
-                  </label>
-                  <input
-                    type="number"
-                    min="1"
-                    max="25"
-                    value={dakuonCount}
-                    onChange={(e) => setDakuonCount(Math.min(25, Math.max(1, parseInt(e.target.value) || 1)))}
-                    className="w-full bg-neutral-50 dark:bg-neutral-900 text-black dark:text-white 
-                      rounded-2xl px-4 py-3 focus:outline-none 
-                      border border-neutral-200 dark:border-neutral-800"
-                  />
-                </div>
-
-                <div className="text-sm text-neutral-600 dark:text-neutral-400">
-                  Total characters: {basicCount + dakuonCount}
-                </div>
+            <div className="space-y-4">
+              <div className="group">
+                <label className="block text-sm font-medium mb-2 text-neutral-700 dark:text-neutral-300">
+                  Quiz Mode
+                </label>
+                <select
+                  className="w-full bg-neutral-50 dark:bg-neutral-900 text-black dark:text-white 
+                    rounded-2xl px-4 py-3 focus:outline-none group-hover:ring-2 ring-violet-200
+                    border border-neutral-200 dark:border-neutral-700 transition-all"
+                  value={quizMode}
+                  onChange={(e) => setQuizMode(e.target.value as QuizMode)}
+                >
+                  <option value="hiragana">Hiragana Quiz</option>
+                  <option value="katakana">Katakana Quiz</option>
+                </select>
               </div>
-            )}
 
-            <button
+              <div className="group">
+                <label className="block text-sm font-medium mb-2 text-neutral-700 dark:text-neutral-300">
+                  Character Set
+                </label>
+                <select
+                  className="w-full bg-neutral-50 dark:bg-neutral-900 text-black dark:text-white 
+                    rounded-2xl px-4 py-3 focus:outline-none group-hover:ring-2 ring-violet-200
+                    border border-neutral-200 dark:border-neutral-700 transition-all"
+                  value={characterSet}
+                  onChange={(e) => setCharacterSet(e.target.value as CharacterSet)}
+                >
+                  <option value="basic">Basic Characters (46)</option>
+                  <option value="dakuon">Dakuon Characters (25)</option>
+                  <option value="all">All Characters (71)</option>
+                  <option value="custom">Custom Selection</option>
+                </select>
+              </div>
+
+              {characterSet === "custom" && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="space-y-4"
+                >
+                  <div>
+                    <label className="block text-sm text-neutral-600 dark:text-neutral-400 mb-2">
+                      Basic Characters (1-46)
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="46"
+                      value={basicCount}
+                      onChange={(e) => setBasicCount(Math.min(46, Math.max(1, parseInt(e.target.value) || 1)))}
+                      className="w-full bg-neutral-50 dark:bg-neutral-900 text-black dark:text-white 
+                        rounded-2xl px-4 py-3 focus:outline-none 
+                        border border-neutral-200 dark:border-neutral-800"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm text-neutral-600 dark:text-neutral-400 mb-2">
+                      Dakuon Characters (1-25)
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="25"
+                      value={dakuonCount}
+                      onChange={(e) => setDakuonCount(Math.min(25, Math.max(1, parseInt(e.target.value) || 1)))}
+                      className="w-full bg-neutral-50 dark:bg-neutral-900 text-black dark:text-white 
+                        rounded-2xl px-4 py-3 focus:outline-none 
+                        border border-neutral-200 dark:border-neutral-800"
+                    />
+                  </div>
+
+                  <div className="text-sm text-neutral-600 dark:text-neutral-400">
+                    Total characters: {basicCount + dakuonCount}
+                  </div>
+                </motion.div>
+              )}
+            </div>
+
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               onClick={handleStart}
-              className="w-full py-3 rounded-2xl text-sm font-medium text-white
-                bg-violet-500 hover:bg-violet-600 transition-colors"
+              className="w-full py-4 rounded-2xl text-sm font-medium text-white
+                bg-gradient-to-r from-violet-500 to-pink-500 hover:from-violet-600 
+                hover:to-pink-600 transition-all shadow-lg shadow-violet-500/20"
             >
               Start Quiz
-            </button>
-          </>
+            </motion.button>
+          </motion.div>
         ) : isGameComplete ? (
-          <div className="text-center space-y-6">
-            <div className="space-y-4">
-              <h2 className="text-2xl font-medium">Quiz Complete!</h2>
-              <p className="text-neutral-600 dark:text-neutral-400">
-                You got {quizState.score} correct out of {quizState.questions.length} questions
-              </p>
-              <p className="text-neutral-600 dark:text-neutral-400">
-                Wrong answers: {quizState.wrongAnswers}
-              </p>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white dark:bg-neutral-800 p-8 rounded-3xl shadow-xl space-y-6"
+          >
+            <div className="text-center space-y-4">
+              <h2 className="text-3xl font-bold bg-gradient-to-r from-violet-600 to-pink-600 bg-clip-text text-transparent">
+                Quiz Complete!
+              </h2>
+              <div className="flex justify-center gap-4">
+                <div className="bg-green-50 dark:bg-green-900/30 px-4 py-2 rounded-xl">
+                  <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+                    {quizState.score}
+                  </p>
+                  <p className="text-sm text-green-600 dark:text-green-400">Correct</p>
+                </div>
+                <div className="bg-red-50 dark:bg-red-900/30 px-4 py-2 rounded-xl">
+                  <p className="text-2xl font-bold text-red-600 dark:text-red-400">
+                    {quizState.wrongAnswers}
+                  </p>
+                  <p className="text-sm text-red-600 dark:text-red-400">Wrong</p>
+                </div>
+              </div>
             </div>
 
             <div className="space-y-3">
@@ -300,65 +341,87 @@ export default function QuizPage() {
               </div>
             </div>
 
-            <button
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               onClick={() => setIsPlaying(false)}
-              className="w-full py-3 rounded-2xl text-sm font-medium text-white
-                bg-violet-500 hover:bg-violet-600 transition-colors"
+              className="w-full py-4 rounded-2xl text-sm font-medium text-white
+                bg-gradient-to-r from-violet-500 to-pink-500 hover:from-violet-600 
+                hover:to-pink-600 transition-all shadow-lg shadow-violet-500/20"
             >
               Play Again
-            </button>
-          </div>
+            </motion.button>
+          </motion.div>
         ) : (
-          <div className="space-y-6">
-            <div className="flex justify-between text-sm">
-              <span>Question {quizState.currentIndex + 1}/{quizState.questions.length}</span>
-              <span>Score: {quizState.score}</span>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white dark:bg-neutral-800 p-8 rounded-3xl shadow-xl space-y-6"
+          >
+            <div className="flex justify-between items-center">
+              <span className="text-sm font-medium px-4 py-2 bg-violet-50 dark:bg-violet-900/30 
+                rounded-xl text-violet-600 dark:text-violet-400">
+                Question {quizState.currentIndex + 1}/{quizState.questions.length}
+              </span>
+              <span className="text-sm font-medium px-4 py-2 bg-pink-50 dark:bg-pink-900/30 
+                rounded-xl text-pink-600 dark:text-pink-400">
+                Score: {quizState.score}
+              </span>
             </div>
 
-            <div className="text-center py-12">
-              <div className="text-6xl mb-4">
+            <motion.div
+              key={quizState.currentIndex}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-center py-12"
+            >
+              <div className="text-8xl mb-4 font-bold bg-gradient-to-br from-violet-600 to-pink-600 
+                bg-clip-text text-transparent">
                 {quizMode === "hiragana" 
                   ? currentQuestion.character.hiragana
                   : currentQuestion.character.katakana
                 }
               </div>
-            </div>
+            </motion.div>
 
             <div className="grid grid-cols-2 gap-3">
               {currentQuestion.options.map((option, index) => (
-                <button
+                <motion.button
                   key={index}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={() => !currentQuestion.isSubmitted && handleAnswer(option)}
                   disabled={currentQuestion.isSubmitted}
-                  className={`
-                    py-3 px-4 rounded-xl text-sm font-medium transition-colors
-                    ${currentQuestion.isSubmitted
+                  className={`py-4 px-6 rounded-xl text-sm font-medium transition-all ${
+                    currentQuestion.isSubmitted
                       ? option === currentQuestion.character.romaji
                         ? "bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-100"
                         : option === currentQuestion.answered
                           ? "bg-red-100 dark:bg-red-800 text-red-800 dark:text-red-100"
-                          : "bg-neutral-100 dark:bg-neutral-800"
+                          : "bg-neutral-100 dark:bg-neutral-700"
                       : currentQuestion.answered === option
-                        ? "bg-violet-100 dark:bg-violet-800"
-                        : "bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700"
-                    }
-                  `}
+                        ? "bg-violet-100 dark:bg-violet-800 text-violet-800 dark:text-violet-100"
+                        : "bg-neutral-50 dark:bg-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-600 shadow-sm"
+                  }`}
                 >
                   {option}
-                </button>
+                </motion.button>
               ))}
             </div>
 
             {!currentQuestion.isSubmitted && (
-              <button
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={handleSubmit}
-                className="w-full py-3 rounded-2xl text-sm font-medium text-white
-                  bg-violet-500 hover:bg-violet-600 transition-colors"
+                className="w-full py-4 rounded-2xl text-sm font-medium text-white
+                  bg-gradient-to-r from-violet-500 to-pink-500 hover:from-violet-600 
+                  hover:to-pink-600 transition-all shadow-lg shadow-violet-500/20"
               >
                 Submit Answer
-              </button>
+              </motion.button>
             )}
-          </div>
+          </motion.div>
         )}
       </div>
     </div>
