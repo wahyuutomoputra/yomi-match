@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DraggableCharacter } from "./draggable-character";
 import { DropZone } from "./drop-zone";
 import { toast, Toaster } from "sonner";
 import { ThemeToggle } from "./theme-toggle";
+import { useViewportSize, useMediaQuery } from '@mantine/hooks';
 
 interface Character {
   id: string;
@@ -105,6 +106,9 @@ export function JapaneseConverter() {
   // Add new states
   const [isPlaying, setIsPlaying] = useState(false);
   const [elapsedTime, setElapsedTime] = useState(0);
+  const { width } = useViewportSize();
+  const dropZoneRef = useRef<HTMLDivElement>(null);
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -137,6 +141,14 @@ export function JapaneseConverter() {
 
   const handleCharacterSelect = (charId: string) => {
     setSelectedChar(charId);
+    
+    if (isMobile) {
+      // @ts-ignore
+      dropZoneRef.current?.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
   };
 
   const handleCorrectDrop = (charId: string) => {
@@ -288,7 +300,7 @@ export function JapaneseConverter() {
                   </div>
                 </div>
 
-                <div className="bg-neutral-50 dark:bg-neutral-900 rounded-2xl p-4 md:p-16 md:flex-1">
+                <div ref={dropZoneRef} className="bg-neutral-50 dark:bg-neutral-900 rounded-2xl p-4 md:p-16 md:flex-1">
                   <h2 className="text-sm font-normal mb-4 text-neutral-600 dark:text-neutral-400">
                     Drop Zone
                   </h2>
