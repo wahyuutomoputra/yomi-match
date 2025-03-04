@@ -46,6 +46,7 @@ export function DropZone({ character, mode, isMatched, isActive, onZoneClick, on
       onClick={onZoneClick}
       className={`w-12 h-12 sm:w-14 sm:h-14 border-2 rounded-xl flex items-center justify-center
         font-medium transition-all duration-200 shadow-lg text-base sm:text-lg cursor-pointer
+        text-gray-900 dark:text-gray-900
         ${isMatched ? "bg-gradient-to-br from-green-400 to-emerald-500 text-white border-none" : ""}
         ${!isMatched && isOver && canDrop ? "border-green-400 bg-green-50 scale-105 rotate-3" : ""}
         ${!isMatched && isOver && !canDrop ? "border-red-400 bg-red-50 scale-105 -rotate-3" : ""}
