@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DraggableCharacter } from "./draggable-character";
@@ -94,12 +94,45 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 export function JapaneseConverter() {
-  const [mode, setMode] = useState<"romaji-hiragana" | "romaji-katakana" | "hiragana-katakana">("romaji-hiragana");
+  const [mode, setMode] = useState<"romaji-hiragana" | "romaji-katakana" | "hiragana-katakana" | "katakana-hiragana">("romaji-hiragana");
   const [score, setScore] = useState(0);
   const [matchedChars, setMatchedChars] = useState<Set<string>>(new Set());
   const [sourceOrder, setSourceOrder] = useState(() => shuffleArray(INITIAL_CHARACTERS));
   const [dropOrder, setDropOrder] = useState(() => shuffleArray(INITIAL_CHARACTERS));
   const [selectedChar, setSelectedChar] = useState<string | null>(null);
+  
+  // Add new states
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [elapsedTime, setElapsedTime] = useState(0);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (isPlaying) {
+      timer = setInterval(() => {
+        setElapsedTime(prev => prev + 1);
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [isPlaying]);
+
+  const formatTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const handleStart = () => {
+    setIsPlaying(true);
+    setElapsedTime(0);
+    setScore(0);
+    setMatchedChars(new Set());
+    setSourceOrder(shuffleArray(INITIAL_CHARACTERS));
+    setDropOrder(shuffleArray(INITIAL_CHARACTERS));
+    toast.success('Game started! Good luck!', {
+      className: 'bg-green-50 text-green-800 border-green-200',
+      duration: 2000,
+    });
+  };
 
   const handleCharacterSelect = (charId: string) => {
     setSelectedChar(charId);
@@ -113,6 +146,14 @@ export function JapaneseConverter() {
       className: 'bg-green-50 text-green-800 border-green-200',
       duration: 1000,
     });
+
+    // Check if game is complete
+    if (score + 1 === INITIAL_CHARACTERS.length) {
+      toast.success(`Congratulations! Completed in ${formatTime(elapsedTime)}!`, {
+        className: 'bg-purple-50 text-purple-800 border-purple-200',
+        duration: 3000,
+      });
+    }
   };
 
   const handleDropZoneClick = (charId: string) => {
@@ -130,79 +171,150 @@ export function JapaneseConverter() {
   };
 
   const handleModeChange = (newMode: typeof mode) => {
+    if (isPlaying) {
+      toast.promise(
+        new Promise((resolve, reject) => {
+          const confirmed = (globalThis as any).confirm('Changing mode will reset your progress. Continue?');
+          if (confirmed) {
+            resolve(true);
+          } else {
+            reject();
+          }
+        }),
+        {
+          loading: 'Confirming...',
+          success: () => {
+            setMode(newMode);
+            setScore(0);
+            setMatchedChars(new Set());
+            setSourceOrder(shuffleArray(INITIAL_CHARACTERS));
+            setDropOrder(shuffleArray(INITIAL_CHARACTERS));
+            return 'Mode changed! Ready to start.';
+          },
+          error: 'Mode change cancelled',
+        }
+      );
+      return;
+    }
+    
     setMode(newMode);
     setScore(0);
     setMatchedChars(new Set());
     setSourceOrder(shuffleArray(INITIAL_CHARACTERS));
     setDropOrder(shuffleArray(INITIAL_CHARACTERS));
+    toast.info('Mode changed! Ready to start.', {
+      className: 'bg-blue-50 text-blue-800 border-blue-200',
+      duration: 2000,
+    });
   };
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="max-w-7xl mx-auto px-2 sm:px-4 py-4 sm:py-6 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
-        <div className="relative z-50">
-          <Toaster position="top-center" />
-        </div>
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-3 bg-white/80 p-4 sm:p-6 rounded-2xl shadow-xl border border-purple-100 mb-4 sm:mb-8">
-          <select
-            className="select bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-medium 
-              w-full max-w-xs border-none shadow-md hover:shadow-lg transition-shadow text-sm sm:text-base"
-            value={mode}
-            onChange={(e) => handleModeChange((e.target as any).value as typeof mode)}
-            defaultValue={mode}
-          >
-            <option value="romaji-hiragana">Romaji → Hiragana</option>
-            <option value="romaji-katakana">Romaji → Katakana</option>
-            <option value="hiragana-katakana">Hiragana ↔ Katakana</option>
-          </select>
-          <div className="flex items-center gap-2 sm:gap-3">
-            <div className="bg-gradient-to-r from-pink-500 to-rose-500 text-white px-3 py-1.5 rounded-xl shadow-md text-sm">
-              Score: {score}
-            </div>
-            <div className="bg-gradient-to-r from-violet-500 to-purple-500 text-white px-3 py-1.5 rounded-xl shadow-md text-sm">
-              {Math.round((score / INITIAL_CHARACTERS.length) * 100)}%
-            </div>
-          </div>
-        </div>
+      <div className="min-h-screen bg-neutral-950 text-neutral-200">
+        <div className="max-w-4xl mx-auto px-4 py-8">
+          <h1 className="text-2xl font-medium text-center mb-12">
+            Japanese Writing System Converter
+          </h1>
+          
+          <div className="flex items-center justify-between gap-4 mb-8 bg-neutral-900 rounded-xl p-4">
+            <select
+              className="bg-neutral-800 text-sm rounded-lg px-4 py-2.5 
+                focus:outline-none border border-neutral-700"
+              value={mode}
+              onChange={(e) => handleModeChange((e.target as any).value as typeof mode)}
+              disabled={isPlaying}
+            >
+              <option value="romaji-hiragana">Romaji → Hiragana</option>
+              <option value="romaji-katakana">Romaji → Katakana</option>
+              <option value="hiragana-katakana">Hiragana ↔ Katakana</option>
+            </select>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-8">
-          <div className="bg-white/80 backdrop-blur-sm p-4 sm:p-8 rounded-2xl shadow-xl border border-indigo-100">
-            <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-indigo-600 to-purple-600 text-transparent bg-clip-text">
-              Source Characters
-            </h2>
-            <div className="flex flex-wrap gap-2 sm:gap-3 justify-center">
-              {sourceOrder.map((char) => (
-                !matchedChars.has(char.id) && (
-                  <DraggableCharacter
-                    key={char.id}
-                    character={char}
-                    mode={mode}
-                    isSelected={selectedChar === char.id}
-                    onSelect={handleCharacterSelect}
-                  />
-                )
-              ))}
+            <div className="flex items-center gap-4">
+              {!isPlaying ? (
+                <button
+                  onClick={handleStart}
+                  className="px-6 py-2.5 bg-neutral-800 rounded-lg border border-neutral-700
+                    hover:bg-neutral-700 transition-colors text-sm"
+                >
+                  Start
+                </button>
+              ) : (
+                <>
+                  <div className="font-mono text-sm px-4 py-2 bg-neutral-800 rounded-lg border border-neutral-700">
+                    {formatTime(elapsedTime)}
+                  </div>
+                  <button
+                    onClick={() => {
+                      setIsPlaying(false);
+                      setElapsedTime(0);
+                      setScore(0);
+                      setMatchedChars(new Set());
+                    }}
+                    className="px-6 py-2.5 bg-rose-500/20 text-rose-200 rounded-lg border border-rose-500/20
+                      hover:bg-rose-500/30 transition-colors text-sm"
+                  >
+                    Stop
+                  </button>
+                </>
+              )}
+
+              <div className="flex items-center gap-2">
+                <div className="px-4 py-2 bg-neutral-800 rounded-lg border border-neutral-700 text-sm">
+                  {score} / {INITIAL_CHARACTERS.length}
+                </div>
+                <div className="px-4 py-2 bg-neutral-800 rounded-lg border border-neutral-700 text-sm">
+                  {Math.round((score / INITIAL_CHARACTERS.length) * 100)}%
+                </div>
+              </div>
             </div>
           </div>
 
-          <div className="bg-white/80 backdrop-blur-sm p-4 sm:p-8 rounded-2xl shadow-xl border border-pink-100">
-            <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-pink-600 to-rose-600 text-transparent bg-clip-text">
-              Drop Zone
-            </h2>
-            <div className="grid grid-cols-4 sm:grid-cols-5 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3 justify-items-center">
-              {dropOrder.map((char) => (
-                <DropZone
-                  key={char.id}
-                  character={char}
-                  mode={mode}
-                  isMatched={matchedChars.has(char.id)}
-                  isActive={selectedChar !== null}
-                  onZoneClick={() => handleDropZoneClick(char.id)}
-                  onCorrectDrop={() => handleCorrectDrop(char.id)}
-                />
-              ))}
+          {isPlaying ? (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="bg-neutral-900 rounded-xl p-6">
+                <h2 className="text-sm font-medium mb-6 text-neutral-400">
+                  Source Characters
+                </h2>
+                <div className="grid grid-cols-4 gap-4">
+                  {sourceOrder.map((char) => (
+                    !matchedChars.has(char.id) && (
+                      <DraggableCharacter
+                        key={char.id}
+                        character={char}
+                        mode={mode}
+                        isSelected={selectedChar === char.id}
+                        onSelect={handleCharacterSelect}
+                      />
+                    )
+                  ))}
+                </div>
+              </div>
+              <div className="bg-neutral-900 rounded-xl p-6">
+                <h2 className="text-sm font-medium mb-6 text-neutral-400">
+                  Drop Zone
+                </h2>
+                <div className="grid grid-cols-4 gap-4">
+                  {dropOrder.map((char) => (
+                    <DropZone
+                      key={char.id}
+                      character={char}
+                      mode={mode}
+                      isMatched={matchedChars.has(char.id)}
+                      isActive={selectedChar !== null}
+                      onZoneClick={() => handleDropZoneClick(char.id)}
+                      onCorrectDrop={() => handleCorrectDrop(char.id)}
+                    />
+                  ))}
+                </div>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-neutral-500 text-sm">
+                Select a mode and click Start to begin matching characters
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </DndProvider>
