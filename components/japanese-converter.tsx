@@ -8,7 +8,12 @@ import { DropZone } from "./drop-zone";
 import { toast, Toaster } from "sonner";
 import { ThemeToggle } from "./theme-toggle";
 import { useViewportSize, useMediaQuery } from "@mantine/hooks";
-import { INITIAL_CHARACTERS, DAKUON_CHARACTERS, type Character } from "@/lib/characters";
+import {
+  INITIAL_CHARACTERS,
+  DAKUON_CHARACTERS,
+  type Character,
+} from "@/lib/characters";
+import { Container } from "./container";
 
 function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array];
@@ -71,8 +76,14 @@ export function JapaneseConverter() {
       case "all":
         return [...INITIAL_CHARACTERS, ...DAKUON_CHARACTERS];
       case "custom":
-        const shuffledBasic = shuffleArray(INITIAL_CHARACTERS).slice(0, basicCount);
-        const shuffledDakuon = shuffleArray(DAKUON_CHARACTERS).slice(0, dakuonCount);
+        const shuffledBasic = shuffleArray(INITIAL_CHARACTERS).slice(
+          0,
+          basicCount
+        );
+        const shuffledDakuon = shuffleArray(DAKUON_CHARACTERS).slice(
+          0,
+          dakuonCount
+        );
         return [...shuffledBasic, ...shuffledDakuon];
       default:
         return INITIAL_CHARACTERS;
@@ -86,10 +97,12 @@ export function JapaneseConverter() {
     setScore(0);
     setMatchedChars(new Set());
     setSelectedChar(null);
-    
+
     // Set initial source and drop orders
     setSourceOrder(shuffleArray(activeChars));
-    setDropOrder(gameMode === "random" ? shuffleArray(activeChars) : [...activeChars]);
+    setDropOrder(
+      gameMode === "random" ? shuffleArray(activeChars) : [...activeChars]
+    );
   };
 
   const handleCharacterSelect = (charId: string) => {
@@ -109,7 +122,7 @@ export function JapaneseConverter() {
     setMatchedChars((prev) => new Set([...prev, charId]));
     setScore((prev) => prev + 1);
     setSelectedChar(null);
-    
+
     // Enhanced success toast with correct total count
     toast.success(
       <div className="flex items-center gap-2">
@@ -122,7 +135,8 @@ export function JapaneseConverter() {
         </div>
       </div>,
       {
-        className: "bg-green-50 text-green-800 border-green-200 dark:bg-green-900 dark:text-green-100 dark:border-green-800",
+        className:
+          "bg-green-50 text-green-800 border-green-200 dark:bg-green-900 dark:text-green-100 dark:border-green-800",
         duration: 1500,
       }
     );
@@ -140,7 +154,8 @@ export function JapaneseConverter() {
           </div>
         </div>,
         {
-          className: "bg-purple-50 text-purple-800 border-purple-200 dark:bg-purple-900 dark:text-purple-100 dark:border-purple-800",
+          className:
+            "bg-purple-50 text-purple-800 border-purple-200 dark:bg-purple-900 dark:text-purple-100 dark:border-purple-800",
           duration: 3000,
         }
       );
@@ -167,7 +182,8 @@ export function JapaneseConverter() {
           </div>
         </div>,
         {
-          className: "bg-red-50 text-red-800 border-red-200 dark:bg-red-900 dark:text-red-100 dark:border-red-800",
+          className:
+            "bg-red-50 text-red-800 border-red-200 dark:bg-red-900 dark:text-red-100 dark:border-red-800",
           duration: 1500,
         }
       );
@@ -220,7 +236,6 @@ export function JapaneseConverter() {
         <div className="w-full mx-auto px-4 py-4">
           <div className="rounded-3xl p-6 min-h-[calc(100vh-120px)]">
             <div className="space-y-4 max-w-[520px] mx-auto">
-
               {isPlaying && (
                 <button
                   onClick={() => {
@@ -267,8 +282,8 @@ export function JapaneseConverter() {
                   </h2>
                   <div className="grid grid-cols-4 md:grid-cols-7 gap-2 md:gap-x-8 md:gap-y-6">
                     {sourceOrder
-                      .filter(char => !matchedChars.has(char.id))
-                      .map(char => (
+                      .filter((char) => !matchedChars.has(char.id))
+                      .map((char) => (
                         <DraggableCharacter
                           key={char.id}
                           character={char}
@@ -304,128 +319,163 @@ export function JapaneseConverter() {
               </div>
             )}
 
-            {!isPlaying && (
-              <div className="mt-12">
-                <div className="max-w-[600px] mx-auto bg-white/80 dark:bg-neutral-800/80 backdrop-blur-xl p-8 rounded-3xl shadow-xl space-y-8">
-                  <div className="text-center space-y-3">
-                    <div className="flex gap-3 text-4xl justify-center">
-                      <span className="bg-gradient-to-br from-violet-600 to-pink-600 bg-clip-text text-transparent">あ</span>
-                      <span className="bg-gradient-to-br from-violet-600 to-pink-600 bg-clip-text text-transparent">ア</span>
-                      <span className="bg-gradient-to-br from-violet-600 to-pink-600 bg-clip-text text-transparent">A</span>
-                    </div>
-
-                    <h2 className="text-3xl font-bold bg-gradient-to-r from-violet-600 to-pink-600 bg-clip-text text-transparent">
-                      Japanese Writing System
-                    </h2>
-                    <p className="text-neutral-600 dark:text-neutral-400">
-                      Master Hiragana and Katakana through interactive exercises
-                    </p>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="group">
-                      <label className="block text-sm font-medium mb-2 text-neutral-700 dark:text-neutral-300">
-                        Exercise Mode
-                      </label>
-                      <select
-                        className="w-full bg-neutral-50 dark:bg-neutral-900 text-black dark:text-white 
-                          rounded-2xl px-4 py-3 focus:outline-none group-hover:ring-2 ring-violet-200
-                          border border-neutral-200 dark:border-neutral-700 transition-all"
-                        value={mode}
-                        onChange={(e) => handleModeChange(e.target.value as ModeType)}
-                      >
-                        <option value="romaji-hiragana">Romaji → Hiragana</option>
-                        <option value="romaji-katakana">Romaji → Katakana</option>
-                        <option value="hiragana-katakana">Hiragana ↔ Katakana</option>
-                      </select>
-                    </div>
-
-                    <div className="group">
-                      <label className="block text-sm font-medium mb-2 text-neutral-700 dark:text-neutral-300">
-                        Character Set
-                      </label>
-                      <select
-                        className="w-full bg-neutral-50 dark:bg-neutral-900 text-black dark:text-white 
-                          rounded-2xl px-4 py-3 focus:outline-none group-hover:ring-2 ring-violet-200
-                          border border-neutral-200 dark:border-neutral-700 transition-all"
-                        value={characterSet}
-                        onChange={(e) => setCharacterSet(e.target.value as CharacterSet)}
-                      >
-                        <option value="basic">Basic Characters (46)</option>
-                        <option value="dakuon">Dakuon Characters (25)</option>
-                        <option value="all">All Characters (71)</option>
-                        <option value="custom">Custom Selection</option>
-                      </select>
-                    </div>
-
-                    {characterSet === "custom" && (
-                      <div className="space-y-4">
-                        <div className="group">
-                          <label className="block text-sm font-medium mb-2 text-neutral-700 dark:text-neutral-300">
-                            Basic Characters (1-46)
-                          </label>
-                          <input
-                            type="number"
-                            min="1"
-                            max="46"
-                            value={basicCount}
-                            onChange={(e) => setBasicCount(Math.min(46, Math.max(1, parseInt(e.target.value) || 1)))}
-                            className="w-full bg-neutral-50 dark:bg-neutral-900 text-black dark:text-white 
-                              rounded-2xl px-4 py-3 focus:outline-none group-hover:ring-2 ring-violet-200
-                              border border-neutral-200 dark:border-neutral-700 transition-all"
-                          />
-                        </div>
-                        
-                        <div className="group">
-                          <label className="block text-sm font-medium mb-2 text-neutral-700 dark:text-neutral-300">
-                            Dakuon Characters (1-25)
-                          </label>
-                          <input
-                            type="number"
-                            min="1"
-                            max="25"
-                            value={dakuonCount}
-                            onChange={(e) => setDakuonCount(Math.min(25, Math.max(1, parseInt(e.target.value) || 1)))}
-                            className="w-full bg-neutral-50 dark:bg-neutral-900 text-black dark:text-white 
-                              rounded-2xl px-4 py-3 focus:outline-none group-hover:ring-2 ring-violet-200
-                              border border-neutral-200 dark:border-neutral-700 transition-all"
-                          />
-                        </div>
-
-                        <div className="text-sm text-neutral-600 dark:text-neutral-400 text-center">
-                          Total characters: {basicCount + dakuonCount}
-                        </div>
+            <Container>
+              {!isPlaying && (
+                <div className="mt-12">
+                  <div className="max-w-[600px] mx-auto bg-white/80 dark:bg-neutral-800/80 backdrop-blur-xl p-8 rounded-3xl shadow-xl space-y-8">
+                    <div className="text-center space-y-3">
+                      <div className="flex gap-3 text-4xl justify-center">
+                        <span className="bg-gradient-to-br from-violet-600 to-pink-600 bg-clip-text text-transparent">
+                          あ
+                        </span>
+                        <span className="bg-gradient-to-br from-violet-600 to-pink-600 bg-clip-text text-transparent">
+                          ア
+                        </span>
+                        <span className="bg-gradient-to-br from-violet-600 to-pink-600 bg-clip-text text-transparent">
+                          A
+                        </span>
                       </div>
-                    )}
 
-                    <div className="group">
-                      <label className="block text-sm font-medium mb-2 text-neutral-700 dark:text-neutral-300">
-                        Order Mode
-                      </label>
-                      <select
-                        className="w-full bg-neutral-50 dark:bg-neutral-900 text-black dark:text-white 
-                          rounded-2xl px-4 py-3 focus:outline-none group-hover:ring-2 ring-violet-200
-                          border border-neutral-200 dark:border-neutral-700 transition-all"
-                        value={gameMode}
-                        onChange={(e) => setGameMode(e.target.value as GameMode)}
-                      >
-                        <option value="random">Random Order</option>
-                        <option value="ordered">Sequential Order</option>
-                      </select>
+                      <h2 className="text-3xl font-bold bg-gradient-to-r from-violet-600 to-pink-600 bg-clip-text text-transparent">
+                        Japanese Writing System
+                      </h2>
+                      <p className="text-neutral-600 dark:text-neutral-400">
+                        Master Hiragana and Katakana through interactive
+                        exercises
+                      </p>
                     </div>
 
-                    <button
-                      onClick={handleStart}
-                      className="w-full py-4 rounded-2xl text-lg font-medium text-white
+                    <div className="space-y-4">
+                      <div className="group">
+                        <label className="block text-sm font-medium mb-2 text-neutral-700 dark:text-neutral-300">
+                          Exercise Mode
+                        </label>
+                        <select
+                          className="w-full bg-neutral-50 dark:bg-neutral-900 text-black dark:text-white 
+                          rounded-2xl px-4 py-3 focus:outline-none group-hover:ring-2 ring-violet-200
+                          border border-neutral-200 dark:border-neutral-700 transition-all"
+                          value={mode}
+                          onChange={(e) =>
+                            handleModeChange(e.target.value as ModeType)
+                          }
+                        >
+                          <option value="romaji-hiragana">
+                            Romaji → Hiragana
+                          </option>
+                          <option value="romaji-katakana">
+                            Romaji → Katakana
+                          </option>
+                          <option value="hiragana-katakana">
+                            Hiragana ↔ Katakana
+                          </option>
+                        </select>
+                      </div>
+
+                      <div className="group">
+                        <label className="block text-sm font-medium mb-2 text-neutral-700 dark:text-neutral-300">
+                          Character Set
+                        </label>
+                        <select
+                          className="w-full bg-neutral-50 dark:bg-neutral-900 text-black dark:text-white 
+                          rounded-2xl px-4 py-3 focus:outline-none group-hover:ring-2 ring-violet-200
+                          border border-neutral-200 dark:border-neutral-700 transition-all"
+                          value={characterSet}
+                          onChange={(e) =>
+                            setCharacterSet(e.target.value as CharacterSet)
+                          }
+                        >
+                          <option value="basic">Basic Characters (46)</option>
+                          <option value="dakuon">Dakuon Characters (25)</option>
+                          <option value="all">All Characters (71)</option>
+                          <option value="custom">Custom Selection</option>
+                        </select>
+                      </div>
+
+                      {characterSet === "custom" && (
+                        <div className="space-y-4">
+                          <div className="group">
+                            <label className="block text-sm font-medium mb-2 text-neutral-700 dark:text-neutral-300">
+                              Basic Characters (1-46)
+                            </label>
+                            <input
+                              type="number"
+                              min="1"
+                              max="46"
+                              value={basicCount}
+                              onChange={(e) =>
+                                setBasicCount(
+                                  Math.min(
+                                    46,
+                                    Math.max(1, parseInt(e.target.value) || 1)
+                                  )
+                                )
+                              }
+                              className="w-full bg-neutral-50 dark:bg-neutral-900 text-black dark:text-white 
+                              rounded-2xl px-4 py-3 focus:outline-none group-hover:ring-2 ring-violet-200
+                              border border-neutral-200 dark:border-neutral-700 transition-all"
+                            />
+                          </div>
+
+                          <div className="group">
+                            <label className="block text-sm font-medium mb-2 text-neutral-700 dark:text-neutral-300">
+                              Dakuon Characters (1-25)
+                            </label>
+                            <input
+                              type="number"
+                              min="1"
+                              max="25"
+                              value={dakuonCount}
+                              onChange={(e) =>
+                                setDakuonCount(
+                                  Math.min(
+                                    25,
+                                    Math.max(1, parseInt(e.target.value) || 1)
+                                  )
+                                )
+                              }
+                              className="w-full bg-neutral-50 dark:bg-neutral-900 text-black dark:text-white 
+                              rounded-2xl px-4 py-3 focus:outline-none group-hover:ring-2 ring-violet-200
+                              border border-neutral-200 dark:border-neutral-700 transition-all"
+                            />
+                          </div>
+
+                          <div className="text-sm text-neutral-600 dark:text-neutral-400 text-center">
+                            Total characters: {basicCount + dakuonCount}
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="group">
+                        <label className="block text-sm font-medium mb-2 text-neutral-700 dark:text-neutral-300">
+                          Order Mode
+                        </label>
+                        <select
+                          className="w-full bg-neutral-50 dark:bg-neutral-900 text-black dark:text-white 
+                          rounded-2xl px-4 py-3 focus:outline-none group-hover:ring-2 ring-violet-200
+                          border border-neutral-200 dark:border-neutral-700 transition-all"
+                          value={gameMode}
+                          onChange={(e) =>
+                            setGameMode(e.target.value as GameMode)
+                          }
+                        >
+                          <option value="random">Random Order</option>
+                          <option value="ordered">Sequential Order</option>
+                        </select>
+                      </div>
+
+                      <button
+                        onClick={handleStart}
+                        className="w-full py-4 rounded-2xl text-lg font-medium text-white
                         bg-gradient-to-r from-violet-500 to-pink-500 hover:from-violet-600 
                         hover:to-pink-600 transition-all shadow-lg shadow-violet-500/20"
-                    >
-                      Start Learning
-                    </button>
+                      >
+                        Start Learning
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
+            </Container>
           </div>
         </div>
       </div>
