@@ -31,7 +31,7 @@ export function NavBar() {
                 Katakana
               </NavLink>
             </div>
-            {/* <ThemeToggle /> */}
+            <ThemeToggle />
           </div>
 
           {/* Mobile Navigation Toggle */}

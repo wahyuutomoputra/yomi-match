@@ -1,7 +1,7 @@
 "use client";
 
 import { Container } from "@/components/container";
-import { INITIAL_CHARACTERS } from "@/components/japanese-converter";
+import { INITIAL_CHARACTERS } from "@/lib/characters";
 
 export default function HiraganaPage() {
   return (
@@ -24,7 +24,7 @@ export default function HiraganaPage() {
           {INITIAL_CHARACTERS.map((char) => (
             <div
               key={char.id}
-              className="flex items-center justify-between p-6 rounded-xl bg-white dark:bg-black hover:shadow-lg hover:scale-105 transition-all border border-neutral-200 dark:border-neutral-800"
+              className="flex items-center justify-between p-6 rounded-xl hover:shadow-lg hover:scale-105 transition-all border border-neutral-200 dark:border-neutral-800"
             >
               <span className="text-3xl font-medium bg-gradient-to-br from-pink-500 to-purple-500 bg-clip-text text-transparent">
                 {char.hiragana}

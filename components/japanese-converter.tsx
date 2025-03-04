@@ -8,83 +8,7 @@ import { DropZone } from "./drop-zone";
 import { toast, Toaster } from "sonner";
 import { ThemeToggle } from "./theme-toggle";
 import { useViewportSize, useMediaQuery } from "@mantine/hooks";
-
-interface Character {
-  id: string;
-  romaji: string;
-  hiragana: string;
-  katakana: string;
-}
-
-export const INITIAL_CHARACTERS: Character[] = [
-  // Vowels
-  { id: "a", romaji: "a", hiragana: "あ", katakana: "ア" },
-  { id: "i", romaji: "i", hiragana: "い", katakana: "イ" },
-  { id: "u", romaji: "u", hiragana: "う", katakana: "ウ" },
-  { id: "e", romaji: "e", hiragana: "え", katakana: "エ" },
-  { id: "o", romaji: "o", hiragana: "お", katakana: "オ" },
-
-  // K-series
-  { id: "ka", romaji: "ka", hiragana: "か", katakana: "カ" },
-  { id: "ki", romaji: "ki", hiragana: "き", katakana: "キ" },
-  { id: "ku", romaji: "ku", hiragana: "く", katakana: "ク" },
-  { id: "ke", romaji: "ke", hiragana: "け", katakana: "ケ" },
-  { id: "ko", romaji: "ko", hiragana: "こ", katakana: "コ" },
-
-  // S-series
-  { id: "sa", romaji: "sa", hiragana: "さ", katakana: "サ" },
-  { id: "shi", romaji: "shi", hiragana: "し", katakana: "シ" },
-  { id: "su", romaji: "su", hiragana: "す", katakana: "ス" },
-  { id: "se", romaji: "se", hiragana: "せ", katakana: "セ" },
-  { id: "so", romaji: "so", hiragana: "そ", katakana: "ソ" },
-
-  // T-series
-  { id: "ta", romaji: "ta", hiragana: "た", katakana: "タ" },
-  { id: "chi", romaji: "chi", hiragana: "ち", katakana: "チ" },
-  { id: "tsu", romaji: "tsu", hiragana: "つ", katakana: "ツ" },
-  { id: "te", romaji: "te", hiragana: "て", katakana: "テ" },
-  { id: "to", romaji: "to", hiragana: "と", katakana: "ト" },
-
-  // N-series
-  { id: "na", romaji: "na", hiragana: "な", katakana: "ナ" },
-  { id: "ni", romaji: "ni", hiragana: "に", katakana: "ニ" },
-  { id: "nu", romaji: "nu", hiragana: "ぬ", katakana: "ヌ" },
-  { id: "ne", romaji: "ne", hiragana: "ね", katakana: "ネ" },
-  { id: "no", romaji: "no", hiragana: "の", katakana: "ノ" },
-
-  // H-series
-  { id: "ha", romaji: "ha", hiragana: "は", katakana: "ハ" },
-  { id: "hi", romaji: "hi", hiragana: "ひ", katakana: "ヒ" },
-  { id: "fu", romaji: "fu", hiragana: "ふ", katakana: "フ" },
-  { id: "he", romaji: "he", hiragana: "へ", katakana: "ヘ" },
-  { id: "ho", romaji: "ho", hiragana: "ほ", katakana: "ホ" },
-
-  // M-series
-  { id: "ma", romaji: "ma", hiragana: "ま", katakana: "マ" },
-  { id: "mi", romaji: "mi", hiragana: "み", katakana: "ミ" },
-  { id: "mu", romaji: "mu", hiragana: "む", katakana: "ム" },
-  { id: "me", romaji: "me", hiragana: "め", katakana: "メ" },
-  { id: "mo", romaji: "mo", hiragana: "も", katakana: "モ" },
-
-  // Y-series
-  { id: "ya", romaji: "ya", hiragana: "や", katakana: "ヤ" },
-  { id: "yu", romaji: "yu", hiragana: "ゆ", katakana: "ユ" },
-  { id: "yo", romaji: "yo", hiragana: "よ", katakana: "ヨ" },
-
-  // R-series
-  { id: "ra", romaji: "ra", hiragana: "ら", katakana: "ラ" },
-  { id: "ri", romaji: "ri", hiragana: "り", katakana: "リ" },
-  { id: "ru", romaji: "ru", hiragana: "る", katakana: "ル" },
-  { id: "re", romaji: "re", hiragana: "れ", katakana: "レ" },
-  { id: "ro", romaji: "ro", hiragana: "ろ", katakana: "ロ" },
-
-  // W-series
-  { id: "wa", romaji: "wa", hiragana: "わ", katakana: "ワ" },
-  { id: "wo", romaji: "wo", hiragana: "を", katakana: "ヲ" },
-
-  // N
-  { id: "n", romaji: "n", hiragana: "ん", katakana: "ン" },
-];
+import { INITIAL_CHARACTERS, type Character } from "@/lib/characters";
 
 function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array];
@@ -278,9 +202,9 @@ export function JapaneseConverter() {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="min-h-screen bg-white dark:bg-black">
+      <div className="min-h-screen">
         <div className="w-full mx-auto px-4 py-4">
-          <div className="bg-white dark:bg-black rounded-3xl p-6 min-h-[calc(100vh-120px)]">
+          <div className="rounded-3xl p-6 min-h-[calc(100vh-120px)]">
             <div className="space-y-4 max-w-[520px] mx-auto">
 
               {isPlaying && (
@@ -377,7 +301,7 @@ export function JapaneseConverter() {
                   </div>
 
                   <div className="space-y-2">
-                    <h2 className="text-2xl font-medium text-black dark:text-white">
+                    <h2 className="text-2xl font-medium">
                       Learn Japanese Writing System
                     </h2>
                     <p className="text-neutral-600 dark:text-neutral-400">
@@ -422,19 +346,19 @@ export function JapaneseConverter() {
 
                   <div className="grid grid-cols-3 gap-4 w-full max-w-[520px] mt-4">
                     <div className="p-4 rounded-2xl bg-neutral-50 dark:bg-neutral-900 text-center">
-                      <div className="text-2xl mb-1">ひ</div>
+                      <div className="text-2xl text-neutral-950 mb-1">ひ</div>
                       <div className="text-sm text-neutral-600 dark:text-neutral-400">
                         Hiragana
                       </div>
                     </div>
                     <div className="p-4 rounded-2xl bg-neutral-50 dark:bg-neutral-900 text-center">
-                      <div className="text-2xl mb-1">カ</div>
+                      <div className="text-2xl text-neutral-950 mb-1">カ</div>
                       <div className="text-sm text-neutral-600 dark:text-neutral-400">
                         Katakana
                       </div>
                     </div>
                     <div className="p-4 rounded-2xl bg-neutral-50 dark:bg-neutral-900 text-center">
-                      <div className="text-2xl mb-1">A</div>
+                      <div className="text-2xl text-neutral-950  mb-1">A</div>
                       <div className="text-sm text-neutral-600 dark:text-neutral-400">
                         Romaji
                       </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { INITIAL_CHARACTERS } from "@/components/japanese-converter";
+import { INITIAL_CHARACTERS } from "@/lib/characters";
 import { Container } from "@/components/container";
 export default function KatakanaPage() {
   return (
@@ -21,7 +21,7 @@ export default function KatakanaPage() {
           {INITIAL_CHARACTERS.map((char) => (
             <div
               key={char.id}
-              className="flex items-center justify-between p-6 rounded-xl bg-white dark:bg-black hover:shadow-lg hover:scale-105 transition-all border border-neutral-200 dark:border-neutral-800"
+              className="flex items-center justify-between p-6 rounded-xl  hover:shadow-lg hover:scale-105 transition-all border border-neutral-200 dark:border-neutral-800"
             >
               <span className="text-3xl font-medium bg-gradient-to-br from-blue-500 to-cyan-500 bg-clip-text text-transparent">
                 {char.katakana}
