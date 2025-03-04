@@ -6,6 +6,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { DraggableCharacter } from "./draggable-character";
 import { DropZone } from "./drop-zone";
 import { toast, Toaster } from "sonner";
+import { ThemeToggle } from "./theme-toggle";
 
 interface Character {
   id: string;
@@ -210,16 +211,19 @@ export function JapaneseConverter() {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="min-h-screen bg-neutral-950 text-neutral-200">
+      <div className="min-h-screen bg-neutral-100 dark:bg-neutral-950 text-neutral-800 dark:text-neutral-200">
         <div className="max-w-4xl mx-auto px-4 py-8">
-          <h1 className="text-2xl font-medium text-center mb-12">
-            Japanese Writing System Converter
-          </h1>
+          <div className="flex items-center justify-between mb-12">
+            <h1 className="text-2xl font-medium text-center">
+              Japanese Writing System Converter
+            </h1>
+            <ThemeToggle />
+          </div>
           
-          <div className="flex items-center justify-between gap-4 mb-8 bg-neutral-900 rounded-xl p-4">
+          <div className="flex items-center justify-between gap-4 mb-8 bg-white dark:bg-neutral-900 rounded-xl p-4 shadow-sm">
             <select
-              className="bg-neutral-800 text-sm rounded-lg px-4 py-2.5 
-                focus:outline-none border border-neutral-700"
+              className="bg-neutral-100 dark:bg-neutral-800 text-sm rounded-lg px-4 py-2.5 
+                focus:outline-none border border-neutral-200 dark:border-neutral-700"
               value={mode}
               onChange={(e) => handleModeChange((e.target as any).value as typeof mode)}
               disabled={isPlaying}
@@ -233,14 +237,16 @@ export function JapaneseConverter() {
               {!isPlaying ? (
                 <button
                   onClick={handleStart}
-                  className="px-6 py-2.5 bg-neutral-800 rounded-lg border border-neutral-700
-                    hover:bg-neutral-700 transition-colors text-sm"
+                  className="px-6 py-2.5 bg-neutral-100 dark:bg-neutral-800 rounded-lg 
+                    border border-neutral-200 dark:border-neutral-700
+                    hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors text-sm"
                 >
                   Start
                 </button>
               ) : (
                 <>
-                  <div className="font-mono text-sm px-4 py-2 bg-neutral-800 rounded-lg border border-neutral-700">
+                  <div className="font-mono text-sm px-4 py-2 bg-neutral-100 dark:bg-neutral-800 rounded-lg 
+                    border border-neutral-200 dark:border-neutral-700">
                     {formatTime(elapsedTime)}
                   </div>
                   <button
@@ -250,8 +256,9 @@ export function JapaneseConverter() {
                       setScore(0);
                       setMatchedChars(new Set());
                     }}
-                    className="px-6 py-2.5 bg-rose-500/20 text-rose-200 rounded-lg border border-rose-500/20
-                      hover:bg-rose-500/30 transition-colors text-sm"
+                    className="px-6 py-2.5 bg-rose-50 dark:bg-rose-500/20 text-rose-600 dark:text-rose-200 
+                      rounded-lg border border-rose-100 dark:border-rose-500/20
+                      hover:bg-rose-100 dark:hover:bg-rose-500/30 transition-colors text-sm"
                   >
                     Stop
                   </button>
@@ -259,10 +266,12 @@ export function JapaneseConverter() {
               )}
 
               <div className="flex items-center gap-2">
-                <div className="px-4 py-2 bg-neutral-800 rounded-lg border border-neutral-700 text-sm">
+                <div className="px-4 py-2 bg-neutral-100 dark:bg-neutral-800 rounded-lg 
+                  border border-neutral-200 dark:border-neutral-700 text-sm">
                   {score} / {INITIAL_CHARACTERS.length}
                 </div>
-                <div className="px-4 py-2 bg-neutral-800 rounded-lg border border-neutral-700 text-sm">
+                <div className="px-4 py-2 bg-neutral-100 dark:bg-neutral-800 rounded-lg 
+                  border border-neutral-200 dark:border-neutral-700 text-sm">
                   {Math.round((score / INITIAL_CHARACTERS.length) * 100)}%
                 </div>
               </div>
@@ -271,8 +280,8 @@ export function JapaneseConverter() {
 
           {isPlaying ? (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-neutral-900 rounded-xl p-6">
-                <h2 className="text-sm font-medium mb-6 text-neutral-400">
+              <div className="bg-white dark:bg-neutral-900 rounded-xl p-6 shadow-sm">
+                <h2 className="text-sm font-medium mb-6 text-neutral-600 dark:text-neutral-400">
                   Source Characters
                 </h2>
                 <div className="grid grid-cols-4 gap-4">
@@ -289,8 +298,8 @@ export function JapaneseConverter() {
                   ))}
                 </div>
               </div>
-              <div className="bg-neutral-900 rounded-xl p-6">
-                <h2 className="text-sm font-medium mb-6 text-neutral-400">
+              <div className="bg-white dark:bg-neutral-900 rounded-xl p-6 shadow-sm">
+                <h2 className="text-sm font-medium mb-6 text-neutral-600 dark:text-neutral-400">
                   Drop Zone
                 </h2>
                 <div className="grid grid-cols-4 gap-4">
@@ -310,7 +319,7 @@ export function JapaneseConverter() {
             </div>
           ) : (
             <div className="text-center py-12">
-              <p className="text-neutral-500 text-sm">
+              <p className="text-neutral-500 dark:text-neutral-400 text-sm">
                 Select a mode and click Start to begin matching characters
               </p>
             </div>
