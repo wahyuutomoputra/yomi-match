@@ -235,8 +235,7 @@ export function JapaneseConverter() {
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="min-h-screen bg-white dark:bg-black">
-        <div className="w-full max-w-full mx-auto px-4 py-4">
-
+        <div className="w-full mx-auto px-4 py-4">
           <div className="bg-white dark:bg-black rounded-3xl p-6 min-h-[calc(100vh-120px)]">
             <div className="space-y-4 max-w-[520px] mx-auto">
 
@@ -279,12 +278,12 @@ export function JapaneseConverter() {
             </div>
 
             {isPlaying && (
-              <div className="space-y-4 md:space-y-0 md:flex md:gap-12 mt-6">
-                <div className="bg-neutral-50 dark:bg-neutral-900 rounded-2xl p-4 md:p-16 md:flex-1">
+              <div className="space-y-4 mt-6 md:space-y-0 md:grid md:grid-cols-2 md:gap-4">
+                <div className="bg-neutral-50 dark:bg-neutral-900 rounded-2xl p-4 md:p-8">
                   <h2 className="text-sm font-normal mb-4 text-neutral-600 dark:text-neutral-400">
                     Source Characters
                   </h2>
-                  <div className="grid grid-cols-4 md:grid-cols-7 gap-2 md:gap-x-12 md:gap-y-8">
+                  <div className="grid grid-cols-4 md:grid-cols-7 gap-2 md:gap-x-8 md:gap-y-6">
                     {sourceOrder.map(
                       (char) =>
                         !matchedChars.has(char.id) && (
@@ -302,12 +301,12 @@ export function JapaneseConverter() {
 
                 <div
                   ref={dropZoneRef}
-                  className="bg-neutral-50 dark:bg-neutral-900 rounded-2xl p-4 md:p-16 md:flex-1"
+                  className="bg-neutral-50 dark:bg-neutral-900 rounded-2xl p-4 md:p-8"
                 >
                   <h2 className="text-sm font-normal mb-4 text-neutral-600 dark:text-neutral-400">
                     Drop Zone
                   </h2>
-                  <div className="grid grid-cols-4 md:grid-cols-7 gap-2 md:gap-x-12 md:gap-y-8">
+                  <div className="grid grid-cols-4 md:grid-cols-7 gap-2 md:gap-x-8 md:gap-y-6">
                     {dropOrder.map((char) => (
                       <DropZone
                         key={char.id}
