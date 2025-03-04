@@ -1,0 +1,17 @@
+{
+  "name": "Japanese Writing System Converter",
+  "short_name": "JP Converter",
+  "description": "Learn Japanese writing systems through interactive matching",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#6366f1",
+  "icons": [
+    {
+      "src": "/japanese.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+} 
