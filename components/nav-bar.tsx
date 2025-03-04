@@ -31,12 +31,12 @@ export function NavBar() {
                 Katakana
               </NavLink>
             </div>
-            <ThemeToggle />
+            {/* <ThemeToggle /> */}
           </div>
 
           {/* Mobile Navigation Toggle */}
           <div className="flex items-center gap-2 md:hidden">
-            <ThemeToggle />
+            {/* <ThemeToggle /> */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors"
