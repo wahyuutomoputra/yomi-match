@@ -8,7 +8,7 @@ import { DropZone } from "./drop-zone";
 import { toast, Toaster } from "sonner";
 import { ThemeToggle } from "./theme-toggle";
 import { useViewportSize, useMediaQuery } from "@mantine/hooks";
-import { INITIAL_CHARACTERS, type Character } from "@/lib/characters";
+import { INITIAL_CHARACTERS, DAKUON_CHARACTERS, type Character } from "@/lib/characters";
 
 function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array];
@@ -21,10 +21,12 @@ function shuffleArray<T>(array: T[]): T[] {
 
 type ModeType = "romaji-hiragana" | "romaji-katakana" | "hiragana-katakana";
 type GameMode = "random" | "ordered";
+type CharacterSet = "basic" | "dakuon" | "all";
 
 export function JapaneseConverter() {
   const [mode, setMode] = useState<ModeType>("romaji-hiragana");
   const [gameMode, setGameMode] = useState<GameMode>("random");
+  const [characterSet, setCharacterSet] = useState<CharacterSet>("basic");
   const [score, setScore] = useState(0);
   const [matchedChars, setMatchedChars] = useState<Set<string>>(new Set());
   const [sourceOrder, setSourceOrder] = useState(() =>
@@ -58,26 +60,30 @@ export function JapaneseConverter() {
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
+  const getActiveCharacters = () => {
+    switch (characterSet) {
+      case "basic":
+        return INITIAL_CHARACTERS;
+      case "dakuon":
+        return DAKUON_CHARACTERS;
+      case "all":
+        return [...INITIAL_CHARACTERS, ...DAKUON_CHARACTERS];
+      default:
+        return INITIAL_CHARACTERS;
+    }
+  };
+
   const handleStart = () => {
+    const activeChars = getActiveCharacters();
     setIsPlaying(true);
     setElapsedTime(0);
     setScore(0);
     setMatchedChars(new Set());
+    setSelectedChar(null);
     
-    // Always shuffle source characters
-    setSourceOrder(shuffleArray(INITIAL_CHARACTERS));
-    
-    // Only shuffle drop zone if gameMode is random
-    if (gameMode === "random") {
-      setDropOrder(shuffleArray(INITIAL_CHARACTERS));
-    } else {
-      setDropOrder([...INITIAL_CHARACTERS]);
-    }
-    
-    toast.success("Game started! Good luck!", {
-      className: "bg-green-50 text-green-800 border-green-200",
-      duration: 2000,
-    });
+    // Set initial source and drop orders
+    setSourceOrder(shuffleArray(activeChars));
+    setDropOrder(gameMode === "random" ? shuffleArray(activeChars) : [...activeChars]);
   };
 
   const handleCharacterSelect = (charId: string) => {
@@ -93,18 +99,19 @@ export function JapaneseConverter() {
   };
 
   const handleCorrectDrop = (charId: string) => {
+    const activeChars = getActiveCharacters();
     setMatchedChars((prev) => new Set([...prev, charId]));
     setScore((prev) => prev + 1);
     setSelectedChar(null);
     
-    // Enhanced success toast
+    // Enhanced success toast with correct total count
     toast.success(
       <div className="flex items-center gap-2">
         <span className="text-lg">🎯</span>
         <div>
           <p className="font-medium">Correct match!</p>
           <p className="text-sm text-green-800 dark:text-green-200">
-            {score + 1} of {INITIAL_CHARACTERS.length} completed
+            {score + 1} of {activeChars.length} completed
           </p>
         </div>
       </div>,
@@ -114,8 +121,8 @@ export function JapaneseConverter() {
       }
     );
 
-    // Check if game is complete
-    if (score + 1 === INITIAL_CHARACTERS.length) {
+    // Check if game is complete with correct total count
+    if (score + 1 === activeChars.length) {
       toast.success(
         <div className="flex items-center gap-2">
           <span className="text-lg">🎊</span>
@@ -131,6 +138,7 @@ export function JapaneseConverter() {
           duration: 3000,
         }
       );
+      setIsPlaying(false);
     }
   };
 
@@ -239,7 +247,7 @@ export function JapaneseConverter() {
                     className="px-4 py-2.5 bg-neutral-50 dark:bg-neutral-900 
                     text-black dark:text-white rounded-xl text-sm text-center flex-1"
                   >
-                    {score} / {INITIAL_CHARACTERS.length}
+                    {score} / {getActiveCharacters().length}
                   </div>
                 </div>
               )}
@@ -252,18 +260,17 @@ export function JapaneseConverter() {
                     Source Characters
                   </h2>
                   <div className="grid grid-cols-4 md:grid-cols-7 gap-2 md:gap-x-8 md:gap-y-6">
-                    {sourceOrder.map(
-                      (char) =>
-                        !matchedChars.has(char.id) && (
-                          <DraggableCharacter
-                            key={char.id}
-                            character={char}
-                            mode={mode}
-                            isSelected={selectedChar === char.id}
-                            onSelect={handleCharacterSelect}
-                          />
-                        )
-                    )}
+                    {sourceOrder
+                      .filter(char => !matchedChars.has(char.id))
+                      .map(char => (
+                        <DraggableCharacter
+                          key={char.id}
+                          character={char}
+                          mode={mode}
+                          isSelected={selectedChar === char.id}
+                          onSelect={handleCharacterSelect}
+                        />
+                      ))}
                   </div>
                 </div>
 
@@ -315,9 +322,7 @@ export function JapaneseConverter() {
                         rounded-2xl px-4 py-3 focus:outline-none 
                         border border-neutral-200 dark:border-neutral-800"
                       value={mode}
-                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                        handleModeChange((e.target as any).value as ModeType)
-                      }
+                      onChange={(e) => handleModeChange(e.target.value as ModeType)}
                     >
                       <option value="romaji-hiragana">Romaji → Hiragana</option>
                       <option value="romaji-katakana">Romaji → Katakana</option>
@@ -328,8 +333,20 @@ export function JapaneseConverter() {
                       className="w-full bg-neutral-50 dark:bg-neutral-900 text-black dark:text-white 
                         rounded-2xl px-4 py-3 focus:outline-none 
                         border border-neutral-200 dark:border-neutral-800"
+                      value={characterSet}
+                      onChange={(e) => setCharacterSet(e.target.value as CharacterSet)}
+                    >
+                      <option value="basic">Basic Characters (46)</option>
+                      <option value="dakuon">Dakuon Characters (25)</option>
+                      <option value="all">All Characters (71)</option>
+                    </select>
+
+                    <select
+                      className="w-full bg-neutral-50 dark:bg-neutral-900 text-black dark:text-white 
+                        rounded-2xl px-4 py-3 focus:outline-none 
+                        border border-neutral-200 dark:border-neutral-800"
                       value={gameMode}
-                      onChange={(e) => setGameMode((e.target as any).value as GameMode)}
+                      onChange={(e) => setGameMode(e.target.value as GameMode)}
                     >
                       <option value="random">Random Order</option>
                       <option value="ordered">Sequential Order</option>

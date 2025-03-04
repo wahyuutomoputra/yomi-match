@@ -85,15 +85,15 @@ export const DAKUON_CHARACTERS: Character[] = [
 
   // Z-series (voiced S-series)
   { id: "za", romaji: "za", hiragana: "ざ", katakana: "ザ" },
-  { id: "ji", romaji: "ji", hiragana: "じ", katakana: "ジ" },
-  { id: "zu", romaji: "zu", hiragana: "ず", katakana: "ズ" },
+  { id: "ji-shi", romaji: "ji", hiragana: "じ", katakana: "ジ" },
+  { id: "zu-su", romaji: "zu", hiragana: "ず", katakana: "ズ" },
   { id: "ze", romaji: "ze", hiragana: "ぜ", katakana: "ゼ" },
   { id: "zo", romaji: "zo", hiragana: "ぞ", katakana: "ゾ" },
 
   // D-series (voiced T-series)
   { id: "da", romaji: "da", hiragana: "だ", katakana: "ダ" },
-  { id: "ji", romaji: "ji", hiragana: "ぢ", katakana: "ヂ" },
-  { id: "zu", romaji: "zu", hiragana: "づ", katakana: "ヅ" },
+  { id: "ji-chi", romaji: "ji", hiragana: "ぢ", katakana: "ヂ" },
+  { id: "zu-tsu", romaji: "zu", hiragana: "づ", katakana: "ヅ" },
   { id: "de", romaji: "de", hiragana: "で", katakana: "デ" },
   { id: "do", romaji: "do", hiragana: "ど", katakana: "ド" },
 
