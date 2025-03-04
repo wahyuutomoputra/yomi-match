@@ -96,9 +96,11 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 type ModeType = "romaji-hiragana" | "romaji-katakana" | "hiragana-katakana";
+type GameMode = "random" | "ordered";
 
 export function JapaneseConverter() {
   const [mode, setMode] = useState<ModeType>("romaji-hiragana");
+  const [gameMode, setGameMode] = useState<GameMode>("random");
   const [score, setScore] = useState(0);
   const [matchedChars, setMatchedChars] = useState<Set<string>>(new Set());
   const [sourceOrder, setSourceOrder] = useState(() =>
@@ -137,8 +139,17 @@ export function JapaneseConverter() {
     setElapsedTime(0);
     setScore(0);
     setMatchedChars(new Set());
+    
+    // Always shuffle source characters
     setSourceOrder(shuffleArray(INITIAL_CHARACTERS));
-    setDropOrder(shuffleArray(INITIAL_CHARACTERS));
+    
+    // Only shuffle drop zone if gameMode is random
+    if (gameMode === "random") {
+      setDropOrder(shuffleArray(INITIAL_CHARACTERS));
+    } else {
+      setDropOrder([...INITIAL_CHARACTERS]);
+    }
+    
     toast.success("Game started! Good luck!", {
       className: "bg-green-50 text-green-800 border-green-200",
       duration: 2000,
@@ -386,9 +397,18 @@ export function JapaneseConverter() {
                     >
                       <option value="romaji-hiragana">Romaji → Hiragana</option>
                       <option value="romaji-katakana">Romaji → Katakana</option>
-                      <option value="hiragana-katakana">
-                        Hiragana ↔ Katakana
-                      </option>
+                      <option value="hiragana-katakana">Hiragana ↔ Katakana</option>
+                    </select>
+
+                    <select
+                      className="w-full bg-neutral-50 dark:bg-neutral-900 text-black dark:text-white 
+                        rounded-2xl px-4 py-3 focus:outline-none 
+                        border border-neutral-200 dark:border-neutral-800"
+                      value={gameMode}
+                      onChange={(e) => setGameMode((e.target as any).value as GameMode)}
+                    >
+                      <option value="random">Random Order</option>
+                      <option value="ordered">Sequential Order</option>
                     </select>
 
                     <button
