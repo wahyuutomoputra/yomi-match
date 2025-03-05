@@ -28,7 +28,7 @@ export default function QuizPage() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [characterSet, setCharacterSet] = useState<CharacterSet>("basic");
   const [quizMode, setQuizMode] = useState<QuizMode>("hiragana");
-  const [basicCount, setBasicCount] = useState(5);
+  const [basicCount, setBasicCount] = useState(10);
   const [dakuonCount, setDakuonCount] = useState(5);
   const [quizState, setQuizState] = useState<QuizState>({
     currentIndex: 0,
@@ -78,6 +78,11 @@ export default function QuizPage() {
   };
 
   const handleStart = () => {
+    if (characterSet === "custom" && (basicCount + dakuonCount) < 5) {
+      toast.error("Please select at least 5 total characters for the quiz");
+      return;
+    }
+
     setQuizState({
       currentIndex: 0,
       score: 0,
@@ -264,18 +269,23 @@ export default function QuizPage() {
                       </label>
                       <input
                         type="number"
-                        min="1"
+                        min="0"
                         max="25"
                         value={dakuonCount}
-                        onChange={(e) => setDakuonCount(Math.min(25, Math.max(1, parseInt(e.target.value) || 1)))}
+                        onChange={(e) => setDakuonCount(Math.min(25, Math.max(0, parseInt(e.target.value) || 0)))}
                         className="w-full bg-neutral-50 dark:bg-neutral-900 text-black dark:text-white 
                           rounded-2xl px-4 py-3 focus:outline-none 
                           border border-neutral-200 dark:border-neutral-800"
                       />
                     </div>
 
-                    <div className="text-sm text-neutral-600 dark:text-neutral-400">
-                      Total characters: {basicCount + dakuonCount}
+                    <div className="text-sm space-y-1">
+                      <p className="text-neutral-600 dark:text-neutral-400">
+                        Total characters: {basicCount + dakuonCount}
+                      </p>
+                      <p className="text-neutral-500 dark:text-neutral-500 text-xs">
+                        Minimum 5 total characters required
+                      </p>
                     </div>
                   </motion.div>
                 )}
