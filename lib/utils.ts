@@ -1,6 +1,6 @@
-import { type ClassValue, clsx } from "clsx"
+import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { QuizResult, CharacterStats } from "./types"
+import { type CharacterStats, type QuizResult } from "./types"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -15,24 +15,24 @@ export function shuffleArray<T>(array: T[]): T[] {
   return shuffled;
 }
 
-export function saveQuizResult(result: QuizResult) {
-  const results = getQuizResults();
+export function saveQuizResult(result: any) {
+  const results = JSON.parse(localStorage.getItem('quizResults') || '[]');
   results.push(result);
   localStorage.setItem('quizResults', JSON.stringify(results));
 }
 
 export function getQuizResults(): QuizResult[] {
-  const results = localStorage.getItem('quizResults');
-  return results ? JSON.parse(results) : [];
+  return JSON.parse(localStorage.getItem('quizResults') || '[]');
 }
 
 export function calculateCharacterStats(results: QuizResult[]): CharacterStats[] {
   const stats = new Map<string, CharacterStats>();
 
   results.forEach(result => {
-    result.questions.forEach(q => {
-      const current = stats.get(q.character) || {
-        character: q.character,
+    result.questions.forEach(question => {
+      const char = question.character;
+      const current = stats.get(char) || {
+        character: char,
         totalAttempts: 0,
         correctAttempts: 0,
         wrongAttempts: 0,
@@ -40,16 +40,16 @@ export function calculateCharacterStats(results: QuizResult[]): CharacterStats[]
       };
 
       current.totalAttempts++;
-      if (q.correct) {
+      if (question.correct) {
         current.correctAttempts++;
       } else {
         current.wrongAttempts++;
       }
       current.accuracy = (current.correctAttempts / current.totalAttempts) * 100;
 
-      stats.set(q.character, current);
+      stats.set(char, current);
     });
   });
 
-  return Array.from(stats.values());
-} 
+  return Array.from(stats.values()).sort((a, b) => b.totalAttempts - a.totalAttempts);
+}

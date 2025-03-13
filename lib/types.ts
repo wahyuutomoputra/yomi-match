@@ -1,7 +1,7 @@
 export interface QuizResult {
   id: string;
   date: string;
-  mode: "hiragana" | "katakana";
+  mode: "hiragana" | "katakana" | "both";
   characterSet: "basic" | "dakuon" | "all" | "custom";
   totalQuestions: number;
   correctAnswers: number;
